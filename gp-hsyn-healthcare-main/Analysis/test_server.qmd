@@ -1,0 +1,209 @@
+---
+title: "test_server"
+format: html
+editor: visual
+---
+
+## libraries
+
+```{r}
+library(shiny)
+library(ggplot2)
+library(DT)
+library(dplyr)
+library(reshape2)
+library(ggcorrplot)
+library(leaflet)
+```
+
+## load data
+
+```{r}
+data <- read.csv("data/merged_full_dataset.csv")
+```
+
+## correlation matrix function
+
+```{r}
+CorMatrix <- function(data, selected_vars) {
+  if (length(selected_vars) < 2) {
+    stop("Please select at least two variables for the correlation matrix.")
+  }
+  selected_data <- data[, selected_vars, drop = FALSE]
+  if (!all(sapply(selected_data, is.numeric))) {
+    stop("All selected variables must be numeric. 
+         Please remove non-numeric variables.")
+  }
+  corr_mat <- cor(selected_data, use = "complete.obs")
+  plot <- ggcorrplot(corr_mat, hc.order = TRUE, type = "lower", lab = TRUE)
+  return(plot)
+}
+```
+
+## test correlation matrix function
+
+```{r}
+test_vars <- c("private_health_exppc_ppp", "under_5_mortality_rate", 
+               "adult_literacy_rate")
+test_plot <- CorMatrix(data, test_vars)
+test_plot
+```
+
+## correlation matrix draft in server
+
+```{r}
+#| eval: false
+server <- function(input, output, session) {
+  
+  output$corr_matrix <- renderPlot({
+    req(input$corr_vars)
+    selected_data <- data[, input$corr_vars, drop = FALSE]
+    corr_mat <- cor(selected_data, use = "complete.obs")
+    ggcorrplot(corr_mat, hc.order = TRUE, type = "lower", lab = TRUE)
+    
+  })
+  }
+```
+
+## EDA function
+
+```{r}
+PairPlot <- function(data, selected_vars, 
+                     log_transform = FALSE) {
+  if (length(selected_vars) < 2) {
+    stop("Please select at least two variables for the pair plot.")
+  }
+  selected_data <- data[, selected_vars, drop = FALSE]
+  if (!all(sapply(selected_data, is.numeric))) {
+    stop("All selected variables must be numeric. Please remove non-numeric variables.")
+  }
+  if (log_transform) {
+    selected_data <- log1p(selected_data) # log1p is log(x+1)
+  }
+  pairs(selected_data, main = "Pair Plot of Selected Variables")
+}
+
+```
+
+## test EDA functuion
+
+```{r}
+test_vars <- c("private_health_exppc_ppp", "under_5_mortality_rate", 
+               "adult_literacy_rate")
+PairPlot(data, selected_vars = test_vars)
+
+```
+
+```{r}
+PairPlot(data, selected_vars = test_vars, log_transform = TRUE)
+```
+
+
+## EDA draft in server
+
+```{r}
+#| eval: false
+output$var_select_ui <- renderUI({
+  lapply(1:input$num_vars, function(i) {
+    selectInput(paste0("var", i), paste("Variable", i), 
+                choices = colnames(data), 
+                selected = colnames(data)[i])
+  })
+})
+
+output$eda_plot <- renderPlot({
+  req(input$generate_eda) 
+  
+  vars <- sapply(1:input$num_vars, function(i) input[[paste0("var", i)]])
+  selected_data <- data[, vars, drop = FALSE]
+  
+  if (input$log_transform) {
+    selected_data <- log1p(selected_data)
+  }
+  
+  if (!all(sapply(selected_data, is.numeric))) {
+    stop("All selected variables must be numeric.")
+  }
+  
+  pairs(selected_data, main = "Pair Plot of Selected Variables")
+})
+
+```
+
+
+## test data summary
+
+```{r}
+
+test_vars <- c("private_health_exppc_ppp", "under_5_mortality_rate", "adult_literacy_rate")
+selected_data <- data[, test_vars, drop = FALSE]
+
+summary_list <- lapply(selected_data, function(column) {
+  if (is.numeric(column)) {
+    list(
+      Type = "Numeric",
+      Min = min(column, na.rm = TRUE),
+      `1st Qu.` = quantile(column, 0.25, na.rm = TRUE),
+      Median = median(column, na.rm = TRUE),
+      Mean = mean(column, na.rm = TRUE),
+      `3rd Qu.` = quantile(column, 0.75, na.rm = TRUE),
+      Max = max(column, na.rm = TRUE)
+    )
+  } else {
+    list(
+      Type = "Non-numeric",
+      Unique = length(unique(column)),
+      Mode = names(sort(table(column), decreasing = TRUE))[1]
+    )
+  }
+})
+all_cols <- unique(unlist(lapply(summary_list, names)))
+summary_list <- lapply(summary_list, function(x) {
+  x[setdiff(all_cols, names(x))] <- NA
+  return(x)
+})
+summary_df <- do.call(rbind, lapply(names(summary_list), function(var_name) {
+  data.frame(Variable = var_name, t(unlist(summary_list[[var_name]])), check.names = FALSE)
+}))
+
+summary_df
+```
+
+## data summary draft in server
+
+```{r}
+#| eval: false
+  output$summary_table <- renderDataTable({
+    req(input$generate_summary)
+    vars <- input$summary_vars
+    selected_data <- data[, vars, drop = FALSE]
+    summary_list <- lapply(selected_data, function(column) {
+      if (is.numeric(column)) {
+        list(
+          Type = "Numeric",
+          Min = min(column, na.rm = TRUE),
+          `1st Qu.` = quantile(column, 0.25, na.rm = TRUE),
+          Median = median(column, na.rm = TRUE),
+          Mean = mean(column, na.rm = TRUE),
+          `3rd Qu.` = quantile(column, 0.75, na.rm = TRUE),
+          Max = max(column, na.rm = TRUE)
+        )
+      } else {
+        list(
+          Type = "Non-numeric",
+          Unique = length(unique(column)),
+          Mode = names(sort(table(column), decreasing = TRUE))[1]
+        )
+      }
+    })
+    all_cols <- unique(unlist(lapply(summary_list, names)))
+    summary_list <- lapply(summary_list, function(x) {
+      x[setdiff(all_cols, names(x))] <- NA
+      return(x)
+    })
+    summary_df <- do.call(rbind, lapply(names(summary_list), function(var_name) {
+      data.frame(Variable = var_name, t(unlist(summary_list[[var_name]])), check.names = FALSE)
+    }))
+    datatable(summary_df, options = list(pageLength = 10))
+  })
+```

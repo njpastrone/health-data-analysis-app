@@ -1,0 +1,51 @@
+---
+title: "Peer Review Report"
+author: "HSYN-Healthcare Group: 
+Hamed Ahmadi (DATA613)
+Nicolo Pastrone (DATA413) 
+Suneela Maddineni (DATA613) 
+Yanziwei Chen (DATA613)"
+number-sections: true
+embed-resources: true
+format: html
+---
+
+# Introduction
+
+**Date**: 11/08/2024\
+**Participants:**:
+
+HSYN-Healthcare Group: Hamed Ahmadi, Yanziwei Chen\
+KREM-NYC-AirB-B Group: Kai Liao, Mingming Zhang, Xiang Liu, Yuxin Sun\
+
+# Summary
+
+## Strengths
+
+**Clear Actor and Use Case Description:** The use case is well-defined, specifying how users can utilize the app to filter Airbnb listings based on personal preferences.
+
+**Relevant Actor Questions:** The listed questions address essential factors influencing Airbnb listing prices, such as neighborhood, proximity to landmarks, host attributes, and price prediction. These questions align with the app's goal of providing actionable insights for users looking to make data-informed decisions in choosing Airbnb properties.
+
+**Diverse Visualization and Analysis Tools:** The planned options for graphical analysis (bar charts, heat maps, line charts) meet different analytical needs, enabling users to examine trends and understand pricing dynamics effectively.
+
+## Gaps
+
+**Limited Explanation of Filters and Data Scope:** While the workflow mentions filters like location, price range, and ratings, there is limited detail on additional factors, such as amenities or property types. Including more specifics could clarify the variety of options users may explore.
+
+**Expand Filters and Variable Options:** To better support diverse user preferences, consider adding filters like property size, nearby attractions, or specific amenities (e.g., pool, kitchen). This would make the app more comprehensive and adaptable to various preferences.
+
+**Unclear Integration of Analysis Results in Decision-Making:** Although various statistical tools are included, it's not clear how users will interpret these results to make practical decisions (e.g., a clear explanation of what regression results imply about pricing trends).
+
+# Recommendations
+
+**Pre-Set Filters**
+
+Consider adding Pre-Set Filters such as “Budget-Friendly Areas,” “Popular Locations Near Attractions,” and “High-Quality Hosts” to provide users with one-click options for common Airbnb search goals. Unlike standard filters (like price range, neighborhood, and listing type), these curated filters combine multiple criteria into single options that save users time and simplify the experience by targeting specific needs.
+
+**Display a Default Map View with Key Insights**
+
+Start the app with a default map view that shows average prices, high-demand neighborhoods, and listing density across NYC. A “Reset Filters” button should allow users to quickly revert to this default view, making it easy for them to start fresh without manually resetting each filter.
+
+**Statistical Model Purpose and Accessibility**
+
+Ensure clarity around the purpose of the statistical models for average Airbnb users. Clearly define what insights each model offers and why these insights matter for user decisions. If the models are valuable to users, simplify their presentation for accessibility.

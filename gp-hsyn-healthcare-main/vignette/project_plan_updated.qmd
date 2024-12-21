@@ -1,0 +1,249 @@
+---
+title: "How much do you know about life expectancy?"
+author: "Group Members: Hamed Ahmadi (DATA613) \n Nicolo Pastrone (DATA413) \n Suneela Maddineni (DATA613) \n Yanziwei Chen (DATA613)"
+number-sections: true
+embed-resources: true
+format: html
+---
+
+# App Title and Team Members
+
+**App Title**: How much do you know about life expectancy?\
+**Group Members**:\
+- Hamed Ahmadi (DATA 613)\
+- Nicolo Pastrone (DATA 413)\
+- Suneela Maddineni (DATA 613)\
+- Yanziwei Chen (DATA 613)
+
+# Topic and Data
+
+## Problem Statement
+
+This Shiny app will facilitate interactive exploration and statistical modeling, offering valuable insights into the factors influencing life expectancy across different nations. Specifically, this app aims to analyze global life expectancy by building multiple regression models. We try to include different kinds of predictors such as GDP, population, dietary factors, government and private health expenditures, income level, BMI, immunization rate, and more.
+
+## Literature Review
+
+Singh et al. ([2021](https://wrlc-amu.primo.exlibrisgroup.com/permalink/01WRLC_AMU/136nr9u/cdi_scopus_primary_2_s2_0_85122142311)) used a feasible generalized least squares regression model to predict the effects of public health spending per capita, private health spending per capita, GDP per capita, and educational attainment level on under-five mortality rate, mortality rate from chronic non-communicable diseases, and life expectancy at birth. The scholars used World Bank Development Indicators and World Health Organization Data, focusing on the Southeast Asian Region during the period of 2005-2016. Their research finds that public health expenditure produced improvements in all examined health outcomes, while private health expenditure contributed to better health outcomes only in Brunei and Singapore, but not across the region overall. However, the scholars recognize their data includes missing values, and the weak effect of private health expenditure may warrant more research.
+
+Novignon et al. ([2012](https://www.proquest.com/scholarly-journals/effects-public-private-health-care-expenditure-on/docview/1652951251/se-2?accountid=8285)) used fixed and random effects panel data regression models to predict the effects of public health expenditure as a percentage of real national income, private health expenditure as a percentage of real national income, per capita real income, and age on life expectancy at birth, infant mortality rate, and death rate. The scholars used World Bank Development Indicators data for 44 countries in Sub-Saharan Africa from 1995-2010. The empirical analysis showed that both public and private health expenditures had significant effects in improving all examined health outcomes, but public health expenditure was more effective in improving all examined health outcomes. 
+
+Luy et al. ([2019](https://genus.springeropen.com/articles/10.1186/s41118-019-0055-0#Sec2)) examine the role of education in improved life expectancy, focusing on Italy, Denmark, and the United States. The study estimates a large proportion of improvements in life expectancy can be attributed to improved educational structure in the examined countries. Luy et al. predict that improvements in educational structure can lead to gains in life expectancy with a range of 15 percent for men in the USA and 40 percent for women in Denmark. 
+
+Ebenstein et al. ([2015](https://www.jstor.org/stable/43821883?sid=primo&saml_data=eyJzYW1sVG9rZW4iOiJmY2YyNmVlYi05M2E1LTRhMDAtODczNC04MjBmMGE2YmIxMDgiLCJpbnN0aXR1dGlvbklkcyI6WyI0MTNmNDM3Ni01ZjJhLTQ5ZGMtYjA5Mi1kYTc5NDFkOTYwMjkiXX0)) note that China\'s unprecedented economic growth has not been accompanied by equally-massive improvements in health outcomes and life expectancy. China\'s life expectancy, in the last 20 years, increased only modestly compared to neighboring Taiwan and South Korea. The scholars examine whether pollution has an effect on life expectancy in China, finding TSP exposure to be significantly correlated with cardiorespiratory mortality but not life expectancy more broadly. 
+
+Goldin and Lleras-Muney ([2019](https://www.sciencedirect.com/science/article/pii/S0167629618310026)) studied the changing disparity between male and female life expectancy around the world. The scholars found that in the 19th and 20th century, females were disproportionately affected by infectious disease, and as infectious disease rates dropped in the 20th century, female life expectancy rose to levels higher than male life expectancy. 
+
+The scholarly discussion on life expectancy is extensive and proves that life expectancy is determined by a number of factors. Due to the vast amount of predictors of life expectancy, those wishing to study a given parameter\'s effect on life expectancy must be weary of endogeniety use an adequate number of control variables. For this reason, those investigating the subject should have access to wide-ranging data on health care, dietary factors, population factors, economic factors, and more. Our app aims to give users the ability to analyze data and make accurate predictions about life expectancy through compiling data from an array of sources on a number of potential predictors.
+
+## Data Description
+
+**Response Variable**\
+- **Life expectancy at birth (years)**: the average number of years that a newborn could expect to live, if he or she were to pass through life exposed to the sex- and age-specific death rates prevailing at the time of his or her birth, for a specific year, in a given country, territory, or geographic area.(Data Source: [Life expectancy at birth (years)](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/life-expectancy-at-birth-(years)){target="_blank"}
+
+**Predictors**
+
+-   **Gross Domestic Product (GDP)**: A monetary measure of the market value of all the final goods and services produced and rendered in a specific period by a country or countries. (Data Source: [GDP (current US\$) \| Data](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD){target="_blank"} )
+
+-   **Gross National Income (GNI)**: GNI measures the total domestic and foreign value added claimed by residents at a year, expressed in current US dollars using the World Bank Atlas method. (Data Source: [GNI per capita, Atlas method (current US\$) \| Data](https://data.worldbank.org/indicator/NY.GNP.PCAP.CD){target="_blank"} )
+
+-   **Country Status**: Countries may be classified as either developed or developing based on the gross domestic product (GDP) or gross national income (GNI) per capita, the level of industrialization, the general standard of living, the amount of technological infrastructure, and several other potential factors. (Data Source: [World Bank Health Nutrition and Population Survey](https://databank.worldbank.org/source/health-nutrition-and-population-statistics?l=en#))
+
+-   **Population**: All the inhabitants of a country, territory, or geographic area, total or for a given sex and/or age group, at a specific point of time. (Data Source: [Population, total \| Data](https://data.worldbank.org/indicator/SP.POP.TOTL) )
+
+-   **Health Expenditure (% of GDP)**: Health expenditure includes all expenditures for the provision of health services, family planning activities, nutrition activities and emergency aid designated for health. Total expenditure on health as a percentage of gross domestic product (GDP) - This indicator is defined as the level of total expenditure on health expressed as a percentage of GDP. (Data Source: [Current health expenditure (% of GDP) \| Data](https://data.worldbank.org/indicator/SH.XPD.CHEX.GD.ZS) )
+
+-   **Income Level**: Countries are currently divided into four income groupings: low, lower-middle, upper-middle, and high. Income is measured using gross national income (GNI) per capita, in US dollars. For the current 2025 fiscal year, low-income economies are defined as those with a GNI per capita, of \$1,145 or less in 2023; lower middle-income economies are those with a GNI per capita between \$1,146 and \$4,515; upper middle-income economies are those with a GNI per capita between \$4,516 and \$14,005; high-income economies are those with more than a GNI per capita of \$14,005. (Data Source: [World Bank Country and Lending Groups](https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups) )
+
+-   **Educational Index**: The Educational Index is a component of the Human Development Index (HDI) published every year by the United Nations Development Programme. It helps measure educational attainment. (Data Source: [Educational index - Subnational HDI - Table - Global Data Lab](https://globaldatalab.org/shdi/table/edindex/) )
+
+-   **Body Mass Index (BMI)**: BMI is a value derived from the weight and height of a person. The BMI is defined as the body mass derived by the square of the body height. Major adult BMI classifications are underweight ((under 18.5 kg/m2), normal weight (18.5 to 24.9), overweight (25 to 29.9), and obese (30 and more). BMIs under 20 and over 25 have been associated with higher all-cause mortality, with the risk increasing with distance from the 20--25 range. In our analysis, we will use the data sets with a BMI lower than 18.5 (Data Source:[Prevalence of underweight among adults, BMI \< 18.5 (age-standardized estimate) (%)](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/prevalence-of-underweight-among-adults-bmi-18-(age-standardized-estimate)-(-)) ) and higher than 25. (Data Source: [Prevalence of overweight among adults, BMI \>= 25 (age-standardized estimate) (%)](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/prevalence-of-overweight-among-adults-bmi--25-(age-standardized-estimate)-(-)) )
+
+-   **Alcohol Consumption**: Alcohol, recorded per capita (15+) consumption (in liters of pure alcohol), three-year average. (Data Source: [Alcohol, recorded per capita (15+) consumption (in litres of pure alcohol), three-year average](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/alcohol-recorded-per-capita-(15-)-consumption-(in-litres-of-pure-alcohol)-3-year-average-with-95-ci) )
+
+-   **Tobacco Consumption**: Prevalence of current tobacco usage indicates the percentage of a country\'s population using tobacco products at time of measurement. (Data Source: [World Bank Health Nutrition and Population Survey](https://databank.worldbank.org/source/health-nutrition-and-population-statistics?l=en#))
+
+-   **Mortality Death Rate**: Crude death rate indicates the number of deaths occurring during the year, per 1,000 population estimated at midyear. (Data Source: [Death rate, crude (per 1,000 people) \| Data](https://data.worldbank.org/indicator/SP.DYN.CDRT.IN) )
+
+-   **Infant Death Rates**: Infant mortality rate is the number of infants dying before reaching one year of age, per 1,000 live births each year. (Data Source: [Mortality rate, infant (per 1,000 live births) \| Data](https://data.worldbank.org/indicator/SP.DYN.IMRT.IN) )
+
+-   **Immunization Rate (BCG)**: The percentage of children ages 12-23 months who received vaccinations before 12 months or at any time before the survey for BCG. The Bacillus Calmette--Guérin (BCG) vaccine is a vaccine primarily used against tuberculosis. A child is considered adequately immunized after one dose. (Data Source: [Health Nutrition and Population Statistics \| DataBank](https://databank.worldbank.org/source/health-nutrition-and-population-statistics) )
+
+-   **Immunization Rate (DPT)**: The percentage of children ages 12-23 months who received DPT vaccinations before 12 months or at any time before the survey. A child is considered adequately immunized against diphtheria, pertussis (or whooping cough), and tetanus (DPT) after receiving three doses of vaccine. (Data Source: [Health Nutrition and Population Statistics \| DataBank](https://databank.worldbank.org/source/health-nutrition-and-population-statistics) )
+
+-   **Food Supply:** per capita kilocalorie supply, per capita protein supply, and per capita fat supply measure the quantity of food available for consumption at the end of the supply chain. These figures do not account for consumer waste. ([Data Source: Food Supply - Our World in Data](https://ourworldindata.org/food-supply))
+
+# Use Case
+
+## Use Case and Actor Description
+
+**Use Case**:\
+This Shiny app is designed to provide insights into factors which affect life expectancy across different countries. By visualizing and analyzing data, users can explore relationships between life expectancy and a variety of socio-economic and health predictors.
+
+**Actor Descriptions**\
+- **Researchers and Data Analysts**: Professionals in public health, economics, and social sciences examining life expectancy and related health and economic indicators.
+
+\- **Policy Makers**: Governments can use the app to identify impactful indicators for life expectancy and to inform policy.
+
+\- **General Public**: People who are interested in healthy industry or understanding factors which affect life expectancy may find this Shiny app informative and engaging.
+
+## Actor Questions of Interest
+
+-   **Researchers and Data Analysts**
+    -   Which predictors most significantly impact life expectancy?
+    -   How do economic indicators like GDP and income correlate with life expectancy?
+    -   How well does the model fit the data, and are there outliers?
+-   **Policy Makers**
+    -   Which indicators should be prioritized to improve life expectancy?
+    -   What is the relationship between health expenditure and life expectancy?
+-   **General Public**
+    -   Which countries have the highest and lowest life expectancy?
+    -   How do lifestyle factors like alcohol consumption influence life expectancy?
+    -   Are there differences in predictors for life expectancy between developed and developing countries?
+
+## Anticipated Workflow for the Actor
+
+a)  **Select Country or Region**: Begin by choosing one or multiple countries or regions to focus on analysis.
+
+b)  **Look at Variable Distributions**: Choose some variables to look at their distributions. This step helps users understand the general data patterns, outliers, and range of values across countries.
+
+c)  **Set Up Regression Analysis**: Select desired predictors to analyze their impact on life expectancy using the multiple linear regression model.
+
+d)  **Run Regression Model**: Perform the regression analysis, which will provide output including coefficients, significance levels, and model fit indicators, allowing for a deeper look at the relationships between predictors and life expectancy.
+
+e)  **Interpret Model Output**: Examine the significance of predictors, their impact, and the model's overall fit.
+
+f)  **Adjust Model if Needed**: Based on the initial analysis, users may choose to modify the selected predictors to improve model fit or focus on more impactful variables.
+
+g)  **Draw Conclusions**: Use the information gained from visualizations and regression analysis to draw conclusions about predicting life expectancy.
+
+# Ethical Review
+
+An ethical review is undertaken to ensure the app maintains privacy, transparency, and integrity throughout its lifecycle.
+
+-   **Data Privacy**: As this desktop application uses only country-level aggregate data, it does not collect or analyze personal information of individuals or identifiable data. Protection of data privacy also depends on using public sources of data or databases that obtain consent, such as by the World Health Organization and World Bank, as per the ethical guidelines. These practices are coupled with what organizations such as the American Statistical Association requires. Such an organization calls for respect in the privacy of subjects giving data.
+
+-   **Transparency of Data Source**: It is an ethical duty to take proper care in acknowledging all data sources. The app explicitly cites each used dataset that is being analyzed to let users understand where the data emanates from. This follows the ASA's Code of Conduct, which calls for transparency in data analysis and in citing sources.
+
+-   **Minimization of Bias and Interpretation**: An important ethical consideration is avoiding bias in analysis and interpretation. Because the app presents data openly and provides a variety of predictors, it allows for a somewhat unbiased discovery of which different factors affect life expectancy. Also, to avoid misinterpretations, users are informed that not every correlation implies causation.
+
+-   **Responsible Use of Findings**: Results would be made available to users, including policy and the general public in such a way that informs and enlightens without making claims of causality, which could result in injurious or biased policymaking. Keeping the interpretation responsible ensures alignment with the ethical guidelines provided by The Data Science Association (DSA): it draws particular attention to responsible communication of analytical results.
+
+# App Concept
+
+## General Layout of the App
+
+The app uses "life expectancy data" - sourced from various datasets for exploration and modeling. It has four major sections:
+
+-   **Data Summary**: This visualizes the dataset in a tabular format interactively, making it easy for the users to explore all the variables and understand what the data is composed of.
+
+-   **Correlation Matrix**: It graphically represents the correlations among selected predictors along with a response variable of life expectancy, making it easy for the user to quickly identify potential relationships in the data.
+
+-   **Exploratory Analysis**: This enables the user to explore the data relationships in depth through making customized graphs and visualizations, including a default multiple regression model plot-with options to further refine axes and transformations, and graph types.
+
+-   **Statistical Analysis**: Provides full statistical output for the model chosen, including diagnostics of the model, important statistical tests, and residual plots given the assumptions and the model's evaluation.
+
+```{r, echo=FALSE, out.width="100%"}
+knitr:: include_graphics("Overview.png", error = FALSE)
+```
+
+## Planned Options for User Data Selection and Manipulation
+
+The app offers flexible data selection options, enabling users to tailor the analysis to their specific needs:
+
+-   **Country Filtering**: Users can filter data by country for focused analysis.
+-   **Predictor Selection**: Users can select predictors for the regression model, directly influencing visualizations and model output.
+
+```{r, echo=FALSE, out.width="100%"}
+#knitr:: include_graphics("Predictors.png", error = FALSE)
+```
+
+## Planned Options for User Exploratory Analysis
+
+-   **Customizable Axes and Transformations**: Users can choose variables for the x- and y-axes, apply transformations, and choose from scatter plots, line plots, and box plots.
+-   **Choropleth Map**: Planned addition to visualize statistical variables across countries by shading.
+
+More analytic tools will be added here as insights are gained during the exploration of the data to offer deeper insights to users into their data.
+
+```{r, echo=FALSE, out.width="100%"}
+knitr:: include_graphics("Exploratory.png", error = FALSE)
+```
+
+## Planned Options for User Statistical Models and Tests
+
+-   **Model and Predictor Significance Tests**: Users can select statistical tests like the F-test for overall model significance, t-tests for predictor significance, and multicollinearity tests.
+-   **Diagnostic Plots**: Residual and Q-Q plots are provided by default for assumption checking.
+-   **Future Additions**: Additional diagnostics and tests will be added based on data insights.
+
+```{r, echo=FALSE, out.width="100%"}
+knitr:: include_graphics("Stat_analysis.png", error = FALSE)
+```
+
+# Collaboration
+
+## Responsibilities for Group Members
+
+Each member will lead specific aspects of the Shiny app while working collaboratively across all components to maintain a cohesive team dynamic. Rather than isolated tasks, each responsibility will overlap with others to ensure that the team\'s work is fully integrated. Additionally, all group members will collaborate equally on the Progress Report, Vignette, and Oral Presentation.
+
+-   **Suneela Maddineni**
+
+    -   **Data Preparation and Modeling**: Suneela will lead data preparation, focusing on cleaning and structuring the data for analysis. She will work in close partnership with Hamed to coordinate data preparation with modeling needs, ensuring data is fully aligned for analysis and visualization.
+
+    -   **Collaborative Modeling Support**: Although Hamed leads on statistical modeling, Suneela will support model setup and validation by ensuring data inputs are properly preprocessed and compatible with model requirements.
+
+-   **Hamed Ahmadi**
+
+    -   **Statistical Modeling and Data Insights**: Hamed will lead the statistical modeling, ensuring robust analysis aligned with project objectives. He will work closely with Suneela to validate data alignment with the models and collaborate with Nicolo and Yanziwei to ensure model outputs are displayed effectively in the app.
+
+    -   **Cross-Component Testing and Feedback**: Hamed will actively participate in testing both the backend and front end, working with all team members to troubleshoot and refine integration between the models, data, and UI components.
+
+-   **Nicolo Pastrone**
+
+    -   **UI Design and Visual Integration**: Nicolo will lead the app\'s user interface and visualization design, focusing on creating an intuitive experience for users. He will work closely with Yanziwei to ensure that backend functionalities integrate seamlessly with the UI and with Hamed and Suneela to visualize data insights and model results effectively.
+
+    -   **Exploratory Data Visualization**: Nicolo will collaborate with Suneela on visualizing data preparation outcomes and with Hamed to represent statistical outputs. His role will bridge the visual representation of data with the app\'s analytical functionality.
+
+-   **Yanziwei Chen**
+
+    -   **Backend Development and Integration**: Yanziwei will lead backend integration, connecting all inputs, data processing, and model outputs within the Shiny app. She will collaborate with Nicolo on embedding these functionalities into the UI and work with Hamed and Suneela to ensure backend support for model execution and data processing.
+
+    -   **Testing and Final Debugging**: Yanziwei will lead the final testing and debugging of the entire app, with active input from all members to ensure functionality across all components. She will collaborate with everyone during joint testing sessions to resolve any issues impacting app performance.
+
+## Approach to Team Workflow
+
+The team will adopt a collaborative workflow emphasizing overlapping responsibilities and continuous feedback. Regular weekly meetings will be held to align tasks, address challenges, and ensure every team member is up-to-date with all aspects of the app development. Each task is interwoven with others, ensuring every member collaborates on multiple components and avoids siloed work.
+
+**Joint Testing and Debugging Sessions**: Towards the end of the project, the team will conduct joint testing sessions where all members actively participate in testing and refining the app. These sessions will focus on troubleshooting cross-functional issues and finalizing app integration.
+
+**Documentation and Knowledge Sharing**: Each member will maintain clear documentation in a shared repository, allowing for transparency and ease of access to one another\'s work. This will ensure that everyone understands the app\'s full functionality, from data preparation to final output.
+
+In addition to these structured workflows, all team members will work together on the Progress Report, Vignette, and Oral Presentation, with shared contributions to each deliverable.
+
+## Important Dates
+
+**Data Gathering Completed: 11/01**
+
+All data sources will be finalized, and initial data sets gathered. This marks the start of the data preparation process.
+
+**Data Preparation and Cleaning: 11/05**
+
+Initial data preparation, including cleaning and structuring, will be completed. This data will be ready for initial modeling and exploration.
+
+**Initial Shiny App Development: 11/15**
+
+The basic structure of the Shiny app, including the UI layout and backend framework, will be in place. Data visualization components will be in early development, and regression models will begin integration.
+
+**Code Freeze / App Development: 12/01**
+
+Major code changes for the app will cease by this date. Final touches, testing, and debugging will take place after this milestone, focusing on refinement rather than new feature additions.
+
+**Vignette Development and Review: 12/05**
+
+The vignette, which documents the app\'s development process and functionality, will be finalized and reviewed. All members will contribute to ensure accuracy and clarity.
+
+**Shiny App Submission: 12/11-12/12**
+
+The completed Shiny app will be submitted, with the final version available on GitHub. This includes all testing and debugging completed.
+
+**Oral Demonstration: 12/11-12/12**
+
+Each member will participate in the oral presentation, discussing their contributions to the app and demonstrating its functionality.

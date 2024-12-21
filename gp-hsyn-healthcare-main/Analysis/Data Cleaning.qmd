@@ -1,0 +1,346 @@
+---
+title: "Preliminary Data Cleaning for Healthcare Data Analysis App"
+format: html
+editor: visual
+---
+
+## Load libraries and data
+
+```{r, show = FALSE, message = FALSE}
+library(tidyverse)
+library(readr)
+library(readxl)
+```
+
+```{r, show = FALSE, message = FALSE}
+initial_health_parameters <- read_xlsx("data/P_Data_Extract_From_Health_Nutrition_and_Population_Statistics (1).xlsx", 
+    sheet = "Data")
+
+development_indicators <- read_xlsx("data/P_Initial Query Development Indicators Healthcare Data Analysis Project.xlsx", 
+    sheet = "Data")
+
+education_indicators <- read_xlsx("data/P_Initial Query Education Statistics Healthcare Data Analysis Projects .xlsx", 
+    sheet = "Data")
+
+weight_indicators <- read_xlsx("data/P_Overweight and Underweight Children Healthcare Data Analysis.xlsx", 
+    sheet = "Data")
+
+life_exp <- read_xlsx("data/P_Data_Extract_From_Health_Nutrition_and_Population_Statistics_Life_Exp.xlsx", sheet = 'Data')
+
+food_supply <- read_csv("data/global-food (1).csv")
+```
+
+## Explore data
+
+```{r}
+initial_health_parameters |> head()
+development_indicators |> head()
+education_indicators |> head()
+weight_indicators |> head()
+food_supply |> head()
+life_exp |> head()
+```
+
+## Clean World Bank data
+
+### Rename column in education statistics to make it consistent with other queries
+
+```{r}
+education_indicators |> 
+  rename(`Series Name` = Series) -> education_indicators
+```
+
+### Reshape data
+
+```{r}
+clean_years <- function(dataset) {
+  
+  dataset |> 
+    select(-c(`Country Name`, `Country Code`, `Series Name`, `Series Code`)) |> 
+  rename_with(~ map_chr(.x, ~ str_extract(.x, "\\d{4}")), everything()) |> 
+  bind_cols(dataset |> select(c(`Country Name`, `Country Code`, `Series Name`, `Series Code`))) |> 
+  relocate(`Country Name`, `Country Code`, `Series Name`, `Series Code`) |> 
+  pivot_longer(
+    cols = `1960`:`2023`, names_to = "year", values_to = "value"
+  ) |> 
+    mutate(
+      year = as.numeric(year),
+      value = as.numeric(value)
+    )
+    
+}
+```
+
+```{r, warning = FALSE}
+clean_years(initial_health_parameters) -> cleaned_health_parameters
+clean_years(development_indicators) -> cleaned_development_indicators
+clean_years(education_indicators) -> cleaned_education_indicators
+clean_years(weight_indicators) -> cleaned_weight_indicators
+clean_years(life_exp) -> cleaned_life_exp
+```
+
+## Bind and clean World Bank data
+
+```{r}
+cleaned_health_parameters |> 
+  bind_rows(cleaned_development_indicators) |> 
+  bind_rows(cleaned_education_indicators) |> 
+  bind_rows(cleaned_weight_indicators) |> 
+  bind_rows(cleaned_life_exp) -> wb_data
+```
+
+### Remove false parameters
+
+```{r}
+wb_data |> 
+  distinct(`Series Name`)
+```
+
+### Reshape data
+
+```{r}
+wb_data |> 
+  filter(`Series Name` != "Last Updated: 07/01/2024", `Series Name` != "Data from database: Health Nutrition and Population Statistics", !is.na(`Series Name` )) |> 
+  pivot_wider(id_cols = c(`Country Name`, `Country Code`, year), names_from = `Series Name`, values_from = value) -> wb_data
+```
+
+## Join World Bank and Food Supply data
+
+### Clean Food Supply data
+
+```{r}
+food_supply |> 
+  select(Country, Year, `Food supply (kcal per capita per day)`, `Food supply (Protein g per capita per day)`, `Food supply (Fat g per capita per day)`) -> food_supply
+```
+
+### Examine sameness of country columns
+
+```{r}
+food_supply |> 
+  head()
+```
+
+```{r}
+wb_data |> 
+  head()
+```
+
+### Check the countries/regions present in one column and missing in the other
+
+```{r}
+setdiff(wb_data$`Country Name`, food_supply$Country)
+setdiff(food_supply$Country, wb_data$`Country Name`)
+```
+
+Left joining will keep all wb_data, but measures must be taken to preserve the countries present in the food_supply data that have different spelling in the wb_data. Regions from the food_supply data will be dropped, as our analysis will focus on individual countries, and our parameters of interest are primarily within the wb_data.
+
+### Fix country spelling in food supply data
+
+```{r}
+food_supply |> 
+  mutate(
+    Country = case_when(
+      Country == "Bahamas" ~ "Bahamas, The",
+      Country == "Brunei" ~ "Brunei Darussalam",
+      Country == "Cape Verde" ~ "Cabo Verde",
+      Country == "Democratic Republic of Congo" ~ "Congo, Dem. Rep.",
+      Country == "Congo" ~ "Congo, Rep.",
+      Country == "Egypt" ~ "Egypt, Arab Rep.",
+      Country == "Gambia" ~ "Gambia, The",
+      Country == "Hong Kong" ~ "Hong Kong SAR, China",
+      Country == "Iran" ~ "Iran, Islamic Rep.",
+      Country == "Kyrgyzstan" ~ "Kyrgyz Republic",
+      Country == "Laos" ~ "Lao PDR",
+      Country == "Macao" ~ "Macao SAR, China",
+      Country == "North Korea" ~ "Korea, Dem. People's Rep.",
+      Country == "South Korea" ~ "Korea, Rep.",
+      Country == "Russia" ~ "Russian Federation",
+      Country == "Saint Kitts and Nevis" ~ "St. Kitts and Nevis",
+      Country == "Saint Lucia" ~ "St. Lucia",
+      Country == "Saint Vincent and the Grenadines" ~ "St. Vincent and the Grenadines",
+      Country == "Turkey" ~ "Turkiye",
+      Country == "Venezuela" ~ "Venezuela, RB",
+      Country == "Vietnam" ~ "Viet Nam",
+      Country == "Yemen" ~ "Yemen, Rep.",
+      Country == "Slovakia" ~ "Slovak Republic",
+      Country == "Syria" ~ "Syrian Arab Republic",
+      .default = Country
+    )
+  ) -> food_supply
+
+```
+
+### Recheck diff
+
+```{r}
+setdiff(wb_data$`Country Name`, food_supply$Country)
+setdiff(food_supply$Country, wb_data$`Country Name`)
+```
+
+All of the first list will remain in our dataset.The countries still in the second list are seemingly not present in our wb_data, either due to disputed sovereignty (as is the case with Taiwan), due to being no longer in existence (as is the case with Czechoslovakia, the USSR, and Yugoslavia), or due to being a country grouping (as is the case with Belgium-Luxembourg).
+
+### Join dfs
+
+```{r}
+wb_data |> 
+  left_join(food_supply, by = join_by(`Country Name` == Country, year == Year)) -> full_wb_food_data
+```
+
+## Review data for export
+
+```{r}
+full_wb_food_data |> 
+  summary()
+```
+
+### Reclassify some columns
+
+```{r}
+full_wb_food_data |> 
+  mutate(`Country Name` = as.factor(`Country Name`), `Country Code` = as.factor(`Country Code`), year = as.integer(year)) -> full_wb_food_data
+```
+
+### Create metadata df
+
+```{r}
+full_wb_food_data |> 
+  colnames() |> 
+  as.vector.data.frame() -> vector_colnames
+
+data.frame(original_variable_names = vector_colnames, simplified_names = c(
+  "country",
+  "country_code",
+  "year",
+  "private_health_exppc_ppp",
+  "government_health_exppc_ppp",
+  "external_health_exppc_ppp",
+  "diabetes_rate",
+  "disease_mortality_rate",
+  "infant_mortality_rate",
+  "under_5_mortality_rate",
+  "total_population",
+  "male_population",
+  "female_population",
+  "total_alcohol_consumption_per_capita",
+  "tobacco_use_rate",
+  "crude_deaths_per_thousand",
+  "adult_literacy_rate",
+  "bcg_immunization_rate",
+  "dpt_immunization_rate",
+  "hepb3_immunization_rate",
+  "hib3_immunization_rate",
+  "measles_immunization_rate",
+  "measles_second_dose_immunization_rate",
+  "pol3_immunization_rate",
+  "gdp_per_capita_ppp",
+  "gdp_ppp",
+  "gni_ppp",
+  "gni_per_capita_ppp",
+  "adjusted_net_national_income_usd",
+  "consumer_price_index",
+  "unemployment_rate_national_estimate",
+  "unemployment_rate_ilo_estimate",
+  "urban_population_rate",
+  "average_years_of_schooling",
+  "average_yeras_of_schooling_male",
+  "average_years_of_schooling_female",
+  "obesity_rate_adults",
+  "underweight_rate_children_under_5",
+  "life_expectancy_at_birth_female",
+  "life_expectancy_at_birth_male",
+  "life_expectancy_at_birth",
+  "kilocalorie_supply_per_capita",
+  "protein_g_supply_per_capita",
+  "fat_g_supply_per_capita"
+)) -> metadata
+```
+
+### Rename columns
+
+```{r}
+names(full_wb_food_data) <- metadata$simplified_names
+head(full_wb_food_data)
+```
+
+## Recode country names to match rnaturalearth shapefile
+
+```{r}
+mapping_data <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+```
+
+```{r}
+mapping_data |> 
+  distinct(sovereignt) |> 
+  head()
+```
+
+```{r}
+full_wb_food_data <- full_wb_food_data |> 
+  mutate(country_recoded = as.factor(case_when(
+    country == "Bahamas, The" ~ "Bahamas",
+    country == "Brunei Darussalam" ~ "Brunei",
+    country == "Congo, Dem. Rep." ~ "Democratic Republic of the Congo",
+    country == "Congo, Rep." ~ "Republic of Congo",
+    country == "Cote d'Ivoire" ~ "Côte d'Ivoire",
+    country == "Curacao" ~ "Curaçao",
+    country == "Egypt, Arab Rep." ~ "Egypt",
+    country == "Equatorial Guinea" ~ "Equatorial Guinea",
+    country == "Gambia, The" ~ "Gambia",
+    country == "Hong Kong SAR, China" ~ "Hong Kong",
+    country == "Iran, Islamic Rep." ~ "Iran",
+    country == "Korea, Dem. People's Rep." ~ "North Korea",
+    country == "Korea, Rep." ~ "South Korea",
+    country == "Kyrgyz Republic" ~ "Kyrgyzstan",
+    country == "Lao PDR" ~ "Laos",
+    country == "Macao SAR, China" ~ "Macau",
+    country == "Micronesia, Fed. Sts." ~ "Micronesia",
+    country == "Russian Federation" ~ "Russia",
+    country == "Sao Tome and Principe" ~ "São Tomé and Príncipe",
+    country == "Sint Maarten (Dutch part)" ~ "Sint Maarten",
+    country == "Slovak Republic" ~ "Slovakia",
+    country == "Solomon Islands" ~ "Solomon Islands",
+    country == "South Sudan" ~ "South Sudan",
+    country == "St. Lucia" ~ "Saint Lucia",
+    country == "St. Martin (French part)" ~ "Saint Martin",
+    country == "St. Vincent and the Grenadines" ~ "Saint Vincent and the Grenadines",
+    country == "Syrian Arab Republic" ~ "Syria",
+    country == "Turkiye" ~ "Turkey",
+    country == "United States" ~ "United States of America",
+    country == "Venezuela, RB" ~ "Venezuela",
+    country == "Viet Nam" ~ "Vietnam",
+    country == "Virgin Islands (U.S.)" ~ "United States Virgin Islands",
+    country == "West Bank and Gaza" ~ "Palestine",
+    country == "Yemen, Rep." ~ "Yemen",
+    TRUE ~ country # default case if no match
+  )
+  )
+  ) |> 
+  select(country, country_recoded, everything())
+  
+
+```
+
+### Update metadata
+
+```{r}
+
+new_row <- data.frame(
+  original_variable_names = "country recoded",
+  simplified_names = "country recoded",
+  stringsAsFactors = FALSE
+)
+
+metadata <- rbind(
+  metadata[1, ],        
+  new_row,              
+  metadata[2:nrow(metadata), ]
+)
+
+```
+
+## Export Data
+
+```{r}
+write_csv(full_wb_food_data,"data/merged_full_dataset.csv")
+write_csv(metadata, "data/metadata.csv")
+```

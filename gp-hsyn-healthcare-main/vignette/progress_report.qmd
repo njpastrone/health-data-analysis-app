@@ -1,0 +1,190 @@
+---
+title: "How much do you know about life expectancy? - Progress Report"
+author: "Group Members: Hamed Ahmadi (DATA613), Nicolo Pastrone (DATA413), Suneela Maddineni (DATA613), Yanziwei Chen (DATA613)"
+number-sections: true
+embed-resources: true
+format: html
+---
+
+# App Title and Team Members
+**App Title**: How much do you know about life expectancy?  
+**Group Members**:  
+- Hamed Ahmadi (DATA613)  
+- Nicolo Pastrone (DATA413)  
+- Suneela Maddineni (DATA613)  
+- Yanziwei Chen (DATA613) 
+
+# Topic and Data
+##  Updates on the problem statement and use case
+**Problem statement** :
+This Shiny app is designed to enable users to engage in interactive exploration and robust statistical modeling, allowing them to gain deeper insights into the various factors that influence life expectancy across different nations. Specifically, the primary goal of this app is to analyze global patterns in life expectancy by applying different multiple regression models. These models will help uncover the extent to which different predictors impact life expectancy and how these impacts vary across regions and demographics. The predictors include some economic indicators like gross domestic product (GDP) and income levels, demographic measures such as population size, and health-related factors like government and private healthcare expenditures, dietary habits, and body mass index (BMI). Furthermore, it includes critical public health metrics, such as immunization rates and the prevalence of preventable diseases. All those variables provide a comprehensive understanding of life expectancy.
+
+**Use case**:
+By presenting data in an interactive and visually engaging manner, the app allows users to identify trends, patterns, and correlations about life expectancy that might otherwise go unnoticed. For example, users can explore how economic indicators like GDP and average income levels correlate with life expectancy. Similarly, users can investigate how health expenditures, both governmental and private, impact life expectancy. The app also provides insights into other critical factors such as demographic variables, dietary habits, lifestyle choices, immunization rates, and the prevalence of chronic diseases. Users can analyze how these factors interact with broader societal trends, offering a holistic view of the determinants of life expectancy.
+
+
+## Updates on proposed data sources and status of data collection, cleaning and tidying
+We would finish data collection before 11/17/2024 and finish the cleaning and tidying work before 11/24/2024.
+
+
+# Ethical Review
+- An ethical review is undertaken to ensure the app maintains privacy, transparency, and integrity throughout its lifecycle.
+
+- Data Privacy: As this desktop application uses only country-level aggregate data, it does not collect or analyze personal information of individuals or identifiable data. Protection of data privacy also depends on using public sources of data or databases that obtain consent, such as by the World Health Organization and World Bank, as per the ethical guidelines. These practices are coupled with what organizations such as the American Statistical Association requires. Such an organization calls for respect in the privacy of subjects giving data.
+
+- Transparency of Data Source: It is an ethical duty to take proper care in acknowledging all data sources. The app explicitly cites each used dataset that is being analyzed to let users understand where the data emanates from. This follows the ASA’s Code of Conduct, which calls for transparency in data analysis and in citing sources.
+
+- Minimization of Bias and Interpretation: An important ethical consideration is avoiding bias in analysis and interpretation. Because the app presents data openly and provides a variety of predictors, it allows for a somewhat unbiased discovery of which different factors affect life expectancy. Also, to avoid misinterpretations, users are informed that not every correlation implies causation.
+
+- Responsible Use of Findings: Results would be made available to users, including policy and the general public in such a way that informs and enlightens without making claims of causality, which could result in injurious or biased policymaking. Keeping the interpretation responsible ensures alignment with the ethical guidelines provided by The Data Science Association (DSA): it draws particular attention to responsible communication of analytical results.
+
+# App Design
+
+## Updates and Changes
+
+### Following the peer review comments that were implemented, the major edits and enhancements include:
+
+1. **Intro Tab**:  
+   There is an added tab called **Introduction** that does some groundwork in clearly explaining what the app is meant for and what function it will serve, from where the data within comes, and what benefits this might bring. This can help to ensure that the users immediately get an overview of what functionalities the app provides and for whom.
+
+2. **Override Side Panels**:  
+   Each tab has now fitted with a side panel, which is customized to the workings of the section it represents; this helps in design by making options and features both intuitive and relevant to the tab highlighted.
+
+3. **Choropleth Map Improvements**:  
+   The **Choropleth Map** now supports interactive visualizations. For now, the current dataset uses placeholders, but this can and will be upgraded using real-world data to gain further geographical insights.
+
+---
+
+### Changes from Previous Assignment
+
+Other unification of layout and sections' description was done to provide fluent user experience from one tab to another.
+
+- The **Data Summary** table has been moved to the end for logical flow: analyses first and overview of the dataset second.  
+- This PR improves the **Exploratory Data Analysis** tab by adding more options on **multivariate analysis**, namely: pair plots, correlation matrices, and scatter plots to give flexibility in analyzing complex relationships within the data.
+
+---
+
+## Specific Layout 
+
+The following tab structure has been logically and user-friendly in order of importance for the app layout.
+
+1. **Introduction Tab**:  
+   Overview: a short description of the app, its purpose, where it acquires the data, and who would be the typical user of such an application.
+  
+  
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("intro_tab.png", error = FALSE)
+```
+
+2. **Correlation Matrix Tab**:  
+   It enables the user to study, by using a correlation matrix, the relationship between preselected variables.
+   
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("correlation_tab.png", error = FALSE)
+```
+
+
+3. **Exploratory Data Analysis Tab**:  
+   It dynamically offers data visualization with various options, such as scatter plots, pair plots, and correlation matrices, including the opportunity for log transformations and a multivariate analysis.
+   
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("exploratory_tab.png", error = FALSE)
+```
+
+
+4. **Statistical Analysis Tab**:  
+   Model assumptions and their performance could be checked through various statistical tests, visualizations of residual and QQ plots, F-tests, t-tests, and checks for multicollinearity, among others.
+   
+   
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("stats_tab.png", error = FALSE)
+```
+
+
+5. **Choropleth Map Tab**:  
+   This will be displaying an interactive map with different color schemes based on the selection of variables. **This feature will be further developed with the integration of real data.**
+   
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("map_tab.png", error = FALSE)
+```
+
+
+6. **Summary of Tab Data**:  
+   Provides a comprehensive summary of the dataset by which the user can view the descriptive statistics and choose variables of interest.
+   
+```{r, echo=FALSE, out.width="100%"}
+knitr::include_graphics("data_tab.png", error = FALSE)
+```
+
+
+
+# Demonstration Outline and Responsibilities
+- Introduction Problem - Why is this app important?- *Yanziwei*
+
+- Literature Review - What’s the current state of the scholarly discussion? What questions have been answered and which ones are still unanswered?- *Nicolo*
+
+- Data Description - Where did we get our data? What are we investigating? What time period, place, and other details are we interested in?- *Suneela*
+
+- Methodology - How did we clean our data? Did we run into any issues? How did we solve them?- *Hamed*
+
+- Use Case / Questions of interest - Who can benefit from our app? What does it allow users to do and how does it improve on what previously existed?- *Yanziwei*
+
+## App demonstration - Run app
+
+- Conduct EDA - Pick a specific time period and region to analyze, discuss trends and findings, map demonstration, present charts.- *Nicolo & Yanziwei*
+
+- Statistical analysis - Propose a research question, run a MLR model with reasonable variables, and interpret findings.- *Suneela & Hamed*
+
+- Concluding remarks - What are the strengths and limitations of our app? Reiterate what groups our app could be useful to. In what other ways could we improve the app? Discuss next steps and whether we will use the app, put it online, etc.- *Hamed*
+
+
+# Risk Assessment Mitigation
+- The largest risks for the completion of our project regard data cleaning and availability. We are obtaining data from many sources and for many variables, and sometimes data that appears to be complete can be minimal or incomplete. We may run into issues with data availability and have to reduce our list of variables in question. We have partially mitigated this problem by starting with a large number of variables of interest.
+
+- In the case we are unable to locate good data for some of our variables, we will still have enough data to conduct meaningful analysis. In the data cleaning stage, we may run into issues with joining data from many different sources in different formats. We will likely have to spend a fair amount of time solely on the data cleaning phase. 
+
+- However, with our combined experience cleaning data from this class and other projects, we should be able to fix any of the data cleaning problems we encounter. Other problems may arise with spatial data analysis and the creation of our map, and with statistical analysis, during which we will need to make sure to use the proper methodology for panel data.
+ 
+# Collaboration
+
+## Responsibilities of Group Members
+
+Each team member will take the lead on specific aspects of the Shiny app while maintaining a collaborative approach to ensure seamless integration and a cohesive team dynamic. Responsibilities will overlap to promote full collaboration.
+
+**Suneela Maddineni**
+- Data Preparation and Modeling: Leads data cleaning and structuring for analysis, ensuring alignment with modeling needs through close coordination with Hamed.
+- Collaborative Modeling Support: Supports model setup and validation, ensuring preprocessed data is compatible with modeling requirements.
+
+**Hamed Ahmadi**
+- Statistical Modeling and Insights: Leads statistical modeling and ensures robust analysis aligned with project goals. Collaborates with Suneela on data alignment and with Nicolo and Yanziwei on effective model output visualization.
+Cross-Component Testing: Actively tests and refines the integration between backend models, data, and UI components.
+
+**Nicolo Pastrone**
+- UI Design and Visualization: Leads user interface and visualization design, focusing on creating an intuitive and visually appealing experience. Collaborates with Yanziwei on integrating backend functionalities and with Suneela and Hamed to visualize data and model results.
+- Exploratory Data Visualization: Works with Suneela to visualize data preparation outcomes and with Hamed to represent statistical outputs.
+
+**Yanziwei Chen**
+- Backend Development: Leads backend integration, ensuring smooth connections between inputs, data processing, and model outputs. Collaborates with Nicolo to embed backend functionalities into the UI and with Hamed and Suneela to support model execution.
+- Testing and Debugging: Leads final testing and debugging, coordinating with all members to resolve functionality issues during joint testing sessions.
+
+## Team Workflow Approach
+The team will use a collaborative workflow with overlapping responsibilities and continuous feedback to avoid siloed work and ensure full integration.
+
+- Regular Meetings: Weekly meetings to align tasks, address challenges, and ensure transparency.
+Joint Testing Sessions: Dedicated sessions for team-wide testing and debugging to resolve cross-functional issues and finalize app integration.
+- Documentation and Knowledge Sharing: Clear documentation in a shared repository to provide transparency and enable ease of access to each member’s work.
+
+## Important Dates
+- Data Collection: 11/17
+Data required for the app will be gathered and finalized by this date.
+- Data Preparation and Cleaning: 11/22
+Initial data preparation, including cleaning and structuring, will be completed. This data will be ready for initial modeling and exploration.
+- Initial Shiny App Development: 11/29
+The basic structure of the Shiny app, including the UI layout and backend framework, will be in place. Data visualization components will be in early development, and regression models will begin integration.
+- Code Freeze / App Development: 12/06
+Major code changes for the app will cease by this date. Final touches, testing, and debugging will take place after this milestone, focusing on refinement rather than new feature additions.
+- Vignette Development and Review, Preparation for Oral Demonstration: 12/10
+The vignette will be finalized and reviewed. All members will contribute to ensure accuracy and clarity. Members will meet to prepare for an oral demonstration. 
+- Shiny App Submission: 12/11
+- Vingnetter Submission: 12/11
+- Oral Demonstration: 12/11-12/12
