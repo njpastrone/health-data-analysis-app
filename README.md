@@ -9,3 +9,10 @@ This app can be used by public health professionals, market researchers, and aca
 
 # Instructions:
 To run the app, clone this repository to your local R environment, then run the app.R file in the App folder. If the app does not run, please ensure all necessary packages are installed on your machine and ensure the repository was cloned correctly. If issues still arise, please message njpastrone. Further instructions for app usage are posted on the app's introductory tab. 
+
+# Credit:
+Contributors: Hamed Ahmadi, Nicolo Pastrone, Suneela Maddineni, and Yanziwei Chen (equal contributors, listed alphabetically)
+
+Project completed December 11, 2024
+
+Repository updated December 26, 2024
