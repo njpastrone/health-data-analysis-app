@@ -1,4 +1,4 @@
-# Title: How much do you know about life expectancy?
+# How much do you know about life expectancy?
 
 # Description:
 This app allows users to analyze global health trends including life expectancy at birth and dozens of other health outcomes. Users can also analyze the relationships between economic indicators and health outcomes. This app aims to create a comprehensive dashboard for users to perform exploratory data analysis through static and spatial data visualization and statistical analysis using a panel linear model.
